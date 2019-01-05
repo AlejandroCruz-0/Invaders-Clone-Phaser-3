@@ -1,0 +1,12 @@
+#parcel cache
+.cache
+
+# Dependency directories
+node_modules/
+
+
+# TypeScript v1 declaration files
+typings/
+
+#parcel dist folder
+dist/

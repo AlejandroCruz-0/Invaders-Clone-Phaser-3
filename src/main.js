@@ -6,9 +6,7 @@ import { menuScene } from "./scenes/menuScene";
 
 
 window.onload = () => {
-    console.log(playScene);
-    console.log("window.onload function loaded");
-    console.log(`Width ${window.innerWidth} height ${window.innerHeight}`)
+    
     var config = {
         type: Phaser.AUTO,
         height: 800,

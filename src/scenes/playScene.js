@@ -14,7 +14,7 @@ export class playScene extends Phaser.Scene {
         this.cursors;
         this.fireButton;
         this.starfield;
-        this.score = 0;        
+              
         this.scoreText;
         this.lives;
         this.stateText;
@@ -32,7 +32,7 @@ export class playScene extends Phaser.Scene {
         console.log("started playscene");
     }
     preload() {
-
+        this.score = 0;  
         
 
 
@@ -41,13 +41,7 @@ export class playScene extends Phaser.Scene {
 
     create() {
 
-        //animacion de invasores
-        this.anims.create({
-            key: 'fly',
-            frames: this.anims.generateFrameNumbers('invader', { start: 0, end: 3 }),
-            frameRate: 20,
-            repeat: -1
-        });
+        
 
 
         //animacion de explosion
@@ -346,7 +340,7 @@ export class playScene extends Phaser.Scene {
 
         //movimiento alien
 
-        console.log(this);
+        
         this.alienTween = this.tweens.add({
             targets: this.container, //objeto que contiene el grupo de aliens
             x: 300,

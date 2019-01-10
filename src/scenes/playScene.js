@@ -6,23 +6,23 @@ export class playScene extends Phaser.Scene {
             key: CST.SCENES.PLAY
         })
 
-        this.player;
-        this.aliens;
+        
         this.bullets;
         this.InvaderBullet;
         this.bulletTime = 0;
-        this.cursors;
-        this.fireButton;
-        this.starfield;
-              
-        this.scoreText;
-        this.lives;
-        this.stateText;
+        
+       
+        
+        this.puntaje = 0;       
+        this.puntajeText;
+        
+        
         this.playerBullets;
         this.alienBullets;
         this.container;
         this.playerBulletTimeEvent;
         this.alienTween;
+        
         
     }
 
@@ -30,9 +30,23 @@ export class playScene extends Phaser.Scene {
 
     init(data) {
         console.log("started playscene");
+        this.waveNumber = data.waveNumber;
+
+        if (this.waveNumber === 3){
+            this.scene.start(CST.SCENES.BOSS,{
+                
+            });
+        } 
+
+
+        if (data.puntaje) {this.puntaje = data.puntaje }
+        if (data.lives){this.lives = data.lives}
+        
+        
     }
+
     preload() {
-        this.score = 0;  
+       
         
 
 
@@ -41,8 +55,28 @@ export class playScene extends Phaser.Scene {
 
     create() {
 
-        
+        this.input.keyboard.on('keydown_' + 'A', (event) => {  this.scene.start(CST.SCENES.BOSS) } );
 
+        this.input.keyboard.on('keydown_' + 'R', event => {
+            this.aliens.clear(undefined,true);
+        } );
+
+        this.input.keyboard.on('keydown_' + 'X', event => {
+            
+
+            this.player.x = this.sys.game.config.width / 2;
+            this.player.y = this.sys.game.config.height - 50;
+        } );
+        //puntaje
+         
+
+        //animacion de invasores
+        this.anims.create({
+            key: 'fly',
+            frames: this.anims.generateFrameNumbers('invader', { start: 0, end: 3 }),
+            frameRate: 20,
+            repeat: -1
+        });
 
         //animacion de explosion
         this.anims.create({
@@ -67,6 +101,8 @@ export class playScene extends Phaser.Scene {
         this.player.setScale(2);
         this.player.body.setAllowGravity(false); //Desactiva la gravedad en el objeto nave
         this.player.setCollideWorldBounds(true) //Abilita colision con los border de la escena
+        this.player.body.immovable = true;
+        
 
         this.player.setInteractive();
         this.input.setDraggable(this.player);
@@ -78,30 +114,66 @@ export class playScene extends Phaser.Scene {
 
 
 
-        /*
-        funcion para llamar aliens. se usa la funcion call() para llamar a la funcion createAliens
-        Desde el scope de la funcion create de esta escena. De lo contrario tendria que acceder a la
-        escena directamente usando game.scene.scenes[0] para poder usar funciones como fisicas.
-    
-        https://developer.mozilla.org/es/docs/Web/JavaScript/Referencia/Objetos_globales/Function/call
-    
-        */
-        this.createAliens(); //.call(this);
 
 
 
 
+        //Los Aliens
+        //Para registrar colision los aliens tienen que estar en un grupo de fisica Phaser.
+        this.aliens = this.physics.add.group();
 
 
 
+        let sumOfXAliens = 0;
 
+        for (let y = 0; y < this.waveNumber; y++) {
+            for (let x = 0; x < 5; x++) {
+                let alien = this.aliens.create(x * 48, y * 50, 'invader');
+                alien.anims.play('fly');
+                alien.body.moves = false;
+                
+                //this.aliens.getChildren().length === 5 ? sumOfXAliens += alien.x :
 
+                if (this.aliens.getChildren().length < 5){
+                    sumOfXAliens += alien.x ;
+                }
+                
+                
+            }
+        }
+
+        //Los grupos en Phaser 3 no tienen metodos de ajuste de posicion asi que
+        //tenemos que usar los contenedores de Phaser para ajustar la posicion del grupo de aliens.
+        this.container = this.add.container(0, 50);
+        this.container.add(this.aliens.getChildren());
+
+       
+
+       
+
+        //Los tween de Phaser 3 permite el movimientos de un objeto o grupo.
+
+        //movimiento alien
+
+        
+        this.alienTween = this.tweens.add({
+            targets: this.container, //objeto que contiene el grupo de aliens
+            x: this.sys.game.config.width - sumOfXAliens ,
+
+            duration: 3000,
+            loop: -1,
+            yoyo: true,
+            ease: 'Linear.easeInOut',
+            onLoop: () => { this.container.y += 50 },
+            onYoyo: () => { this.container.y += 50 },
+
+        })
 
 
 
         
         
-        this.scoreText = this.add.text(10, 10, 'Puntaje : ' + this.score, { font: '34px Arial', fill: '#fff' });
+        this.puntajeText = this.add.text(10, 10, 'Puntaje : ' + this.puntaje, { font: '34px Arial', fill: '#fff' });
 
 
         //  configuracion de Vidas
@@ -116,54 +188,21 @@ export class playScene extends Phaser.Scene {
         }
 
 
-        this.stateText = this.make.text({
-            x: this.sys.game.config.width / 2,
-            y: this.sys.game.config.height / 2,
-            text: '',
-            origin: { x: 0.5, y: 0.5 },
-            style: {
-                font: 'bold 25px Arial',
-                fill: 'white',
-                wordWrap: { width: 300 }
-            }
-        });
-
-        this.stateText.visible = false;
+   
 
 
 
 
-        //Controles de fechas de teclado
+       //Configuracion para arrastrar nave de jugador
 
-        this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+       this.input.on('drag', function ( pointer, gameObject, dragX, dragY) {
 
-            gameObject.x = dragX;
-
-
-
-
-        });
-        /*
-        this.input.on('pointerdown', function(pointer){
-            //this.scene.scene.time.now
-            console.log(this.scene.time.now);
-            if (this.scene.time.now > bulletTime) {
- 
- 
-                bullet = game.scene.scenes[0].physics.add.image(player.x, player.y - 8, 'bullet').setVelocity(0, -400).setCollideWorldBounds(true);
-                bullet.body.setAllowGravity(false);
-                bullet.body.onWorldBounds = true;
-                playerBullets.add(bullet);
-                bulletTime = game.scene.scenes[0].sys.time.now + 200;
- 
- 
- 
-            }
-         });*/
+        gameObject.x = dragX;
 
 
 
 
+    });
 
         //funcion para destruir los objetos que tocan con los bordes del mundo
         this.physics.world.on('worldbounds', (body) => body.gameObject.destroy());
@@ -182,14 +221,14 @@ export class playScene extends Phaser.Scene {
 
         this.playerBulletTimeEvent = this.time.addEvent({
             loop: true,
-            callback: this.fireBullet,
+            callback: this.jugador_dispara,
             callbackScope: this,
             delay: 1000
         });
 
         //collider balas jugador con alien
 
-        this.physics.add.collider(this.playerBullets, this.aliens, this.balas_contra_aliens, undefined, this);
+        this.physics.add.collider(this.playerBullets, this.aliens, this.balas_jugador_callback, undefined, this);
 
 
         //collider balas alien con jugador
@@ -198,30 +237,7 @@ export class playScene extends Phaser.Scene {
 
 
         //collider entre aliens y jugador
-        this.physics.add.collider(this.player, this.aliens, function (player, alien) {
-
-
-            alien.destroy();
-            if (this.lives.getChildren().length == 0) {
-                //funcion para remove evento de tiempo en loop
-                this.eventoDeDisparoDeAliens.remove(false);
-                this.alienTween.stop();
-                this.textoFinalJuego.call(this, false);
-
-            } else {
-                this.lives.getFirstAlive().destroy();
-                this.alienTween.stop();
-                this.container.x = 100;
-                this.container.y = 50;
-                this.alienTween.resume();
-
-                this.player.x = this.sys.game.config.width / 2;
-                this.player.y = this.sys.game.config.height - 50;
-            }
-
-
-
-        }, undefined, this);
+        this.physics.add.collider(this.player, this.aliens,this.alien_chocan_callback, undefined, this);
 
 
     }//fin de phaser create
@@ -233,48 +249,16 @@ export class playScene extends Phaser.Scene {
 
 
         //  Scroll the background -- Mover el Fondo 
-        this.starfield.tilePositionY += 2;
+        this.starfield.tilePositionY += 1;
 
 
 
-        if (this.player.active) {
-            //  Reset the player, then check for movement keys
-            this.player.body.velocity.setTo(0, 0);
-            /*
-                            if (cursors.left.isDown) { player.body.velocity.x = -200; }
-                            else if (cursors.right.isDown) { player.body.velocity.x = 200; }*/
-
-
-
-            //if (restartButton.isDown) { this.scene.restart(); }
-
-
-
-
-
-        }
-
+        
     } //fin de funcion update de Phaser 3
 
 
 
-
-
-
-    //Funcion Para crear un evento de escucha cuando se hace un click
-    //reinica la escene Phaser
-    reiniciaElJuego() {
-        this.input.addListener('pointerdown', function (pointer) {
-
-            this.scene.restart();
-
-        }, this);
-    }
-
-
-
-
-    fireBullet() {
+    jugador_dispara() {
         //Funcion Que dispara una bala al presionar espacio
 
         //  To avoid them being allowed to fire too fast we set a time limit
@@ -311,90 +295,61 @@ export class playScene extends Phaser.Scene {
 
     }
 
-
-    createAliens() {
-
-
-        //Los Aliens
-        //Para registrar colision los aliens tienen que estar en un grupo de fisica Phaser.
-        this.aliens = this.physics.add.group({
-
-        });
-
-        for (let y = 0; y < 4; y++) {
-            for (let x = 0; x < 5; x++) {
-                let alien = this.aliens.create(x * 48, y * 50, 'invader');
-
-
-                alien.anims.play('fly');
-                alien.body.moves = false;
-            }
-        }
-
-        //Los grupos en Phaser 3 no tienen metodos de ajuste de posicion asi que
-        //tenemos que usar los contenedores de Phaser para ajustar la posicion del grupo de aliens.
-        this.container = this.add.container(0, 50);
-        this.container.add(this.aliens.getChildren());
-
-        //Los tween de Phaser 3 permite el movimientos de un objeto o grupo.
-
-        //movimiento alien
-
-        
-        this.alienTween = this.tweens.add({
-            targets: this.container, //objeto que contiene el grupo de aliens
-            x: 300,
-
-            duration: 3000,
-            loop: -1,
-            yoyo: true,
-            ease: 'Linear.easeInOut',
-            onLoop: () => { this.container.y += 10 },
-            onYoyo: () => { this.container.y += 10 },
-
-        })
+    
 
 
 
-    }
-
-
-
-    textoFinalJuego(estado) {
+    estadoFinalOla(estado) {
+        //Funcion para revisar 
 
 
         if (estado) {
-            //this.stateText.visible = true;
-            //this.stateText.text = "Has Ganado,has click para reiniciar";
-            //this.reiniciaElJuego.call(this);
-            this.scene.start(CST.SCENES.PLAY);
+            this.waveNumber += 1;
+            
+            this.scene.start(CST.SCENES.PLAY,{
+                waveNumber:this.waveNumber,
+                puntaje:this.puntaje,
+                lives: this.lives
+            });
         }
 
         if (!estado) {
-            this.stateText.visible = true;
-            this.stateText.text = "Has Perdido,has click para reiniciar";
-            //player.body.enable = false;
-            this.reiniciaElJuego.call(this);
+            
+
+
+            this.make.text({
+                x: this.sys.game.config.width / 2,
+                y: this.sys.game.config.height / 2,
+                text: 'GAME OVER click para reiniciar',
+                origin: { x: 0.5, y: 0.5 },
+                style: {
+                    font: 'bold 64px Arial',
+                    fill: 'white',
+                    wordWrap: { width: this.sys.game.config.width }
+                }
+            });
+
+            this.input.addListener('pointerdown', pointer => {this.scene.restart();}, this);
 
         }
 
     }
 
-    balas_contra_aliens(bullet, alien) {
+    balas_jugador_callback(bullet, alien) {
         bullet.destroy();
         alien.destroy();
 
 
-        //  Increase the score
-        this.score += 20;
-        this.scoreText.text = 'Puntaje : ' + this.score;
+        //  Increase the puntaje
+        this.puntaje += 20;
+        this.puntajeText.text = 'Puntaje : ' + this.puntaje;
         this.add.sprite(alien.x + this.container.x, alien.y + this.container.y, "kaboom").play("boom");
 
         if (this.aliens.getChildren().length == 0) {
-            this.score += 1000;
-            this.scoreText.text = 'Puntaje : ' + this.score;
+            this.puntaje += 1000;
+            this.puntajeText.text = 'Puntaje : ' + this.puntaje;
 
-            this.textoFinalJuego.call(this, true);
+            this.estadoFinalOla.call(this, true);
 
 
 
@@ -415,7 +370,7 @@ export class playScene extends Phaser.Scene {
 
             this.playerBulletTimeEvent.paused = true;
             this.player.destroy();
-            this.textoFinalJuego.call(this, false);
+            this.estadoFinalOla.call(this, false);
 
         } else {
             this.lives.getFirstAlive().destroy();
@@ -427,6 +382,31 @@ export class playScene extends Phaser.Scene {
             this.player.y = this.sys.game.config.height - 50;
 
         }
+
+
+    }
+
+    alien_chocan_callback (player, alien) {
+
+
+        alien.destroy();
+        if (this.lives.getChildren().length == 0) {
+            //funcion para remove evento de tiempo en loop
+            this.eventoDeDisparoDeAliens.remove(false);
+            this.alienTween.stop();
+            this.estadoFinalOla.call(this, false);
+
+        } else {
+            this.lives.getFirstAlive().destroy();
+            this.alienTween.stop();
+            this.container.x = 100;
+            this.container.y = 50;
+            this.alienTween.resume();
+
+            this.player.x = this.sys.game.config.width / 2;
+            this.player.y = this.sys.game.config.height - 50;
+        }
+
 
 
     }

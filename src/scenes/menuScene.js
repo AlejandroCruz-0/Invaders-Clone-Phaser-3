@@ -5,7 +5,7 @@ export class menuScene extends Phaser.Scene {
     constructor() {
         super({
             key: CST.SCENES.MENU
-        })
+        });
 
 
 
@@ -16,17 +16,17 @@ export class menuScene extends Phaser.Scene {
         console.log("menuScene Loaded");
 
 
-        
 
-        
+
+
     }
 
     preload() {
-        
+
 
     }
     create() {
-        
+
 
 
 
@@ -44,16 +44,15 @@ export class menuScene extends Phaser.Scene {
 
 
         //font Staatliches,cursive
-        let titleText = "Invaders Clone Phaser 3";
-
+        //ZCOOL KuaiLe, cursive
 
         window.menuTitleName = this.make.text({
             x: 10,
             y: 100,
-            text: titleText,
+            text: "Invaders Clone Phaser 3",
 
             style: {
-                fontFamily: "ZCOOL KuaiLe, cursive",
+                //fontFamily: "ZCOOL KuaiLe, cursive",
                 fontSize: 64,
                 fill: 'white',
                 wordWrap: { width: this.sys.game.config.width }
@@ -70,7 +69,7 @@ export class menuScene extends Phaser.Scene {
             text: "Musica por Metaruka - https://opengameart.org/content/game-game",
 
             style: {
-                fontFamily: "ZCOOL KuaiLe, cursive",
+                //fontFamily: "ZCOOL KuaiLe, cursive",
                 fontSize: 24,
                 fill: 'white',
                 wordWrap: { width: this.sys.game.config.width }
@@ -90,7 +89,7 @@ export class menuScene extends Phaser.Scene {
         playButton.setScale(0.5);
         playButton.setInteractive();
         playButton.setTint(0xff0000);
-        playButton.on("pointerdown", () => this.scene.start(CST.SCENES.PLAY, { waveNumber: 1 }));
+        playButton.on("pointerdown", () => this.scene.start(CST.SCENES.PLAY));
 
         //this.add.image(50,100,"invader");
 
@@ -145,7 +144,7 @@ export class menuScene extends Phaser.Scene {
 
         //mainMusic.play();
 
-        
+
     }
 
 

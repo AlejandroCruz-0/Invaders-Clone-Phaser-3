@@ -4,50 +4,46 @@ export class playScene extends Phaser.Scene {
     constructor() {
         super({
             key: CST.SCENES.PLAY
-        })
+        });
 
-        
-        this.bullets;
-        this.InvaderBullet;
+
+
+
         this.bulletTime = 0;
-        
-       
-        
-        this.puntaje = 0;       
-        this.puntajeText;
-        
-        
-        this.playerBullets;
-        this.alienBullets;
-        this.container;
-        this.playerBulletTimeEvent;
-        this.alienTween;
-        
-        
     }
 
 
 
     init(data) {
         console.log("started playscene");
-        this.waveNumber = data.waveNumber;
-
-        if (this.waveNumber === 3){
-            this.scene.start(CST.SCENES.BOSS,{
-                
-            });
-        } 
-
-
-        if (data.puntaje) {this.puntaje = data.puntaje }
-        if (data.lives){this.lives = data.lives}
         
+
+
+        this.livesNumber = this.livesNumber ? this.livesNumber : 2;
+        this.puntaje = this.puntaje ? this.puntaje : 0;
+
         
+
+       
+        this.waveNumber = this.waveNumber ? this.waveNumber : this.waveNumber = 1;
+       
+
+        
+
+
+       
+        
+
+
+
+
+
+
     }
 
     preload() {
-       
-        
+
+
 
 
     }
@@ -55,20 +51,22 @@ export class playScene extends Phaser.Scene {
 
     create() {
 
-        this.input.keyboard.on('keydown_' + 'A', (event) => {  this.scene.start(CST.SCENES.BOSS) } );
+
+
+        this.input.keyboard.on('keydown_' + 'A', (event) => { this.scene.start(CST.SCENES.BOSS) });
 
         this.input.keyboard.on('keydown_' + 'R', event => {
-            this.aliens.clear(undefined,true);
-        } );
+            this.aliens.clear(undefined, true);
+        });
 
         this.input.keyboard.on('keydown_' + 'X', event => {
-            
+
 
             this.player.x = this.sys.game.config.width / 2;
             this.player.y = this.sys.game.config.height - 50;
-        } );
+        });
         //puntaje
-         
+
 
         //animacion de invasores
         this.anims.create({
@@ -102,7 +100,7 @@ export class playScene extends Phaser.Scene {
         this.player.body.setAllowGravity(false); //Desactiva la gravedad en el objeto nave
         this.player.setCollideWorldBounds(true) //Abilita colision con los border de la escena
         this.player.body.immovable = true;
-        
+
 
         this.player.setInteractive();
         this.input.setDraggable(this.player);
@@ -131,14 +129,14 @@ export class playScene extends Phaser.Scene {
                 let alien = this.aliens.create(x * 48, y * 50, 'invader');
                 alien.anims.play('fly');
                 alien.body.moves = false;
-                
+
                 //this.aliens.getChildren().length === 5 ? sumOfXAliens += alien.x :
 
-                if (this.aliens.getChildren().length < 5){
-                    sumOfXAliens += alien.x ;
+                if (this.aliens.getChildren().length < 5) {
+                    sumOfXAliens += alien.x;
                 }
-                
-                
+
+
             }
         }
 
@@ -147,18 +145,18 @@ export class playScene extends Phaser.Scene {
         this.container = this.add.container(0, 50);
         this.container.add(this.aliens.getChildren());
 
-       
 
-       
+
+
 
         //Los tween de Phaser 3 permite el movimientos de un objeto o grupo.
 
         //movimiento alien
 
-        
+
         this.alienTween = this.tweens.add({
             targets: this.container, //objeto que contiene el grupo de aliens
-            x: this.sys.game.config.width - sumOfXAliens ,
+            x: this.sys.game.config.width - sumOfXAliens,
 
             duration: 3000,
             loop: -1,
@@ -171,8 +169,8 @@ export class playScene extends Phaser.Scene {
 
 
 
-        
-        
+
+
         this.puntajeText = this.add.text(10, 10, 'Puntaje : ' + this.puntaje, { font: '34px Arial', fill: '#fff' });
 
 
@@ -181,28 +179,28 @@ export class playScene extends Phaser.Scene {
         this.add.text(10, 50, 'Vidas : ', { font: '34px Arial', fill: '#fff' });
 
         //configuracion de vidas, se usa el mismo sprite para     
-        for (var i = 0; i < 2; i++) {
+        for (var i = 0; i < this.livesNumber; i++) {
             var ship = this.lives.create(25 + (30 * i), 100, 'ship');
             ship.angle = 90;
             ship.alpha = 0.9;
         }
 
 
-   
 
 
 
 
-       //Configuracion para arrastrar nave de jugador
 
-       this.input.on('drag', function ( pointer, gameObject, dragX, dragY) {
+        //Configuracion para arrastrar nave de jugador
 
-        gameObject.x = dragX;
+        this.input.on('drag', function (pointer, gameObject, dragX, dragY) {
+
+            gameObject.x = dragX;
 
 
 
 
-    });
+        });
 
         //funcion para destruir los objetos que tocan con los bordes del mundo
         this.physics.world.on('worldbounds', (body) => body.gameObject.destroy());
@@ -237,7 +235,7 @@ export class playScene extends Phaser.Scene {
 
 
         //collider entre aliens y jugador
-        this.physics.add.collider(this.player, this.aliens,this.alien_chocan_callback, undefined, this);
+        this.physics.add.collider(this.player, this.aliens, this.alien_chocan_callback, undefined, this);
 
 
     }//fin de phaser create
@@ -253,7 +251,7 @@ export class playScene extends Phaser.Scene {
 
 
 
-        
+
     } //fin de funcion update de Phaser 3
 
 
@@ -295,7 +293,7 @@ export class playScene extends Phaser.Scene {
 
     }
 
-    
+
 
 
 
@@ -305,16 +303,25 @@ export class playScene extends Phaser.Scene {
 
         if (estado) {
             this.waveNumber += 1;
-            
-            this.scene.start(CST.SCENES.PLAY,{
-                waveNumber:this.waveNumber,
-                puntaje:this.puntaje,
-                lives: this.lives
+
+
+            if (this.waveNumber === 3) {
+                this.scene.start(CST.SCENES.BOSS, {
+                    livesNumber : this.livesNumber,
+                    puntaje : this.puntaje,
+    
+                });
+            }
+
+            this.scene.start(CST.SCENES.PLAY, {
+                waveNumber: this.waveNumber,
+                puntaje: this.puntaje,
+                lives: 2
             });
         }
 
         if (!estado) {
-            
+
 
 
             this.make.text({
@@ -329,7 +336,17 @@ export class playScene extends Phaser.Scene {
                 }
             });
 
-            this.input.addListener('pointerdown', pointer => {this.scene.restart();}, this);
+            this.input.addListener('pointerdown', pointer => {
+
+                //this.scene.restart();
+
+                this.scene.start(CST.SCENES.PLAY, {
+                    waveNumber: 1,
+                    puntaje: 0,
+                    lives: 2,
+                });
+
+            }, this);
 
         }
 
@@ -374,6 +391,7 @@ export class playScene extends Phaser.Scene {
 
         } else {
             this.lives.getFirstAlive().destroy();
+            this.livesNumber--;
             this.alienTween.stop();
             this.container.x = 100;
             this.container.y = 50;
@@ -386,7 +404,7 @@ export class playScene extends Phaser.Scene {
 
     }
 
-    alien_chocan_callback (player, alien) {
+    alien_chocan_callback(player, alien) {
 
 
         alien.destroy();
@@ -398,6 +416,7 @@ export class playScene extends Phaser.Scene {
 
         } else {
             this.lives.getFirstAlive().destroy();
+            this.livesNumber--;
             this.alienTween.stop();
             this.container.x = 100;
             this.container.y = 50;

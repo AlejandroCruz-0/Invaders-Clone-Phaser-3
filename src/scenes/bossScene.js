@@ -6,23 +6,22 @@ export class bossScene extends Phaser.Scene {
             key: CST.SCENES.BOSS
         })
 
-        this.player;
-        this.aliens;
-        this.bullets;
-        this.balaBoss;
+        
+       
+        
+        
         this.bulletTime = 0;
-        this.cursors;
-        this.fireButton;
-        this.starfield;
-        this.score = 0;
-        this.scoreText;
-        this.lives;
-        this.stateText;
-        this.playerBullets;
-        this.bossBullets;
-        this.container;
-        this.playerBulletTimeEvent;
-        this.alienTween;
+        
+        
+        
+        
+        
+        
+        
+        
+       
+        
+        
 
 
     }
@@ -31,6 +30,15 @@ export class bossScene extends Phaser.Scene {
 
     init(data) {
         console.log("started BOSSSCENE");
+        console.log(`boss scene data Received `);
+        console.log(data );
+
+
+        
+        this.livesNumber = data.livesNumber ? data.livesNumber : 4;
+
+        console.log(data)
+        this.puntaje = data.puntaje ? data.puntaje : 0;
 
 
     }
@@ -45,7 +53,7 @@ export class bossScene extends Phaser.Scene {
 
     create() {
 
-        
+        console.log(`${this.livesNumber} `)
         
         
 
@@ -92,7 +100,7 @@ export class bossScene extends Phaser.Scene {
 
 
 
-        this.scoreText = this.add.text(10, 10, 'Puntaje : ' + this.score, { font: '34px Arial', fill: '#fff' });
+        this.scoreText = this.add.text(10, 10, 'Puntaje : ' + this.puntaje, { font: '34px Arial', fill: '#fff' });
 
 
         //  configuracion de Vidas
@@ -100,7 +108,7 @@ export class bossScene extends Phaser.Scene {
         this.add.text(10, 50, 'Vidas : ', { font: '34px Arial', fill: '#fff' });
 
         //configuracion de vidas, se usa el mismo sprite para     
-        for (var i = 0; i < 2; i++) {
+        for (var i = 0; i < this.livesNumber; i++) {
             var ship = this.lives.create(25 + (30 * i), 100, 'ship');
             ship.angle = 90;
             ship.alpha = 0.9;

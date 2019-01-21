@@ -6,6 +6,6 @@ Para correr este proyecto tienes que tener node y npm instalado en tu PC. Ademas
 
 ### Cosas Extras que use
 
-* [musica por Metaruka] ( https://opengameart.org/content/game-game)
-* [Tambien use un plugin de rexrainbow para usar fonts web] (https://rexrainbow.github.io/phaser3-rex-notes/docs/site/webfontloader/)
+* [musica por Metaruka](https://opengameart.org/content/game-game)
+* [Tambien use un plugin de rexrainbow para usar fonts web](https://rexrainbow.github.io/phaser3-rex-notes/docs/site/webfontloader/)
 

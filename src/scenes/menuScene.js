@@ -1,4 +1,6 @@
-import { CST } from "../CST";
+import {
+    CST
+} from "../CST";
 
 
 export class menuScene extends Phaser.Scene {
@@ -27,15 +29,18 @@ export class menuScene extends Phaser.Scene {
     }
     create() {
 
+        //variables del tamaño de la ventana del juego
+        let gameWidth = this.sys.game.config.width;
+        let gameHeight = this.sys.game.config.height;
+        
 
-
-
-        //this.add.text(50, 200, 'gay Text', { font: "74px 'Coiny', cursive", fill: "#fff" });
-
-        //animacion de invasores
+        //animacion de invasores en menu
         this.anims.create({
             key: 'menu_fly',
-            frames: this.anims.generateFrameNumbers('invader', { start: 0, end: 3 }),
+            frames: this.anims.generateFrameNumbers('invader', {
+                start: 0,
+                end: 3
+            }),
             frameRate: 20,
             repeat: -1
         });
@@ -43,58 +48,112 @@ export class menuScene extends Phaser.Scene {
 
 
 
-        //font Staatliches,cursive
-        //ZCOOL KuaiLe, cursive
-
-        window.menuTitleName = this.make.text({
+        //Texto de nombre del juego
+        let menuTitleName = this.make.text({
             x: 10,
             y: 100,
             text: "Invaders Clone Phaser 3",
 
-            style: {
-                //fontFamily: "ZCOOL KuaiLe, cursive",
+            style: {                
+                fontFamily: "Staatliches",
                 fontSize: 64,
                 fill: 'white',
-                wordWrap: { width: this.sys.game.config.width }
+                wordWrap: {
+                    width: gameWidth
+                }
             }
-        });
+        }).setDepth(10);
 
 
-        menuTitleName.setDepth(10);
-
-
-        window.credits = this.make.text({
+        //texto para agradecer musico
+        let credits = this.make.text({
             x: 10,
-            y: this.sys.game.config.height - 50,
+            y: gameHeight - 50,
             text: "Musica por Metaruka - https://opengameart.org/content/game-game",
 
             style: {
-                //fontFamily: "ZCOOL KuaiLe, cursive",
+                fontFamily: "Staatliches",
                 fontSize: 24,
                 fill: 'white',
-                wordWrap: { width: this.sys.game.config.width }
+                wordWrap: {
+                    width: gameWidth
+                }
             }
-        });
+        }).setDepth(10);
 
+       
 
-        credits.setDepth(10);
+        
+        
 
 
         //Fondo de estrellas
-        this.menuStarfield = this.add.tileSprite(0, 0, this.sys.game.config.width, this.sys.game.config.height, 'starfield').setOrigin(0, 0);
+        this.menuStarfield = this.add.tileSprite(0, 0, gameWidth, gameHeight, 'starfield').setOrigin(0, 0);
 
 
         //Boton para empezar juego
-        window.playButton = this.add.image(this.sys.game.config.width / 2, this.sys.game.config.height / 2, "playButton");
-        playButton.setScale(0.5);
-        playButton.setInteractive();
-        playButton.setTint(0xff0000);
-        playButton.on("pointerdown", () => this.scene.start(CST.SCENES.PLAY));
+        let playButton = this.add.image(gameWidth / 2, gameHeight / 2, "playButton")
+        .setScale(0.5)
+        .setInteractive()      
+        //Al tocar el boton empezamos la escena de juego
+        .on("pointerdown", () => this.scene.start(CST.SCENES.PLAY));
 
-        //this.add.image(50,100,"invader");
 
-        let gameWidth = this.sys.game.config.width;
-        let gameHeight = this.sys.game.config.height;
+         //emoji de alien
+         let alienEmoji = this.make.text({
+            x: gameWidth / 2 - 32,
+            y: gameHeight / 2 - playButton.height ,
+            text: "👾",            
+
+            style: {
+                fontFamily: "Staatliches",
+                fontSize: 64,
+               
+            }
+        })
+        .setDepth(10)
+        .setTint(0x2f00ff);
+
+
+        let mainMusic = this.sound.add('mainMusic');
+        mainMusic.play({loop: true});
+
+        this.sound.pauseOnBlur = false;
+        
+
+        //nota musical que funciona como boton para pausar la musica
+        let notaMusical = this.make.text({
+            x: gameWidth / 2 - 32,
+            y: gameHeight / 2 + playButton.height ,
+            text: "🎶",            
+
+            style: {
+                fontFamily: "Staatliches",
+                fontSize: 64,
+               
+            }
+        })
+        .setDepth(10)
+        .setInteractive()
+        .on("pointerdown", () => {
+            console.log("clicked note");
+            
+            if (mainMusic.isPlaying){
+                mainMusic.pause();
+            }else if (mainMusic.isPaused){
+                mainMusic.resume();
+            }
+
+            
+        });
+
+
+
+        
+
+        
+
+        
         let aliensMenu = this.add.group();
         let aliensMenu2 = this.add.group();
 
@@ -102,13 +161,17 @@ export class menuScene extends Phaser.Scene {
 
         for (let x = 0; x < 10; x++) {
             aliensMenu.create(20, x * 80, "invader").anims.play('menu_fly');
-            if (x * 80 > gameHeight) { break; }
+            if (x * 80 > gameHeight) {
+                break;
+            }
         }
         //aliensMenu.children.iterate((child) => child.anims.play('menu_fly'));
 
         for (let x = 0; x < 10; x++) {
             aliensMenu2.create(gameWidth - 20, x * 80, "invader");
-            if (x * 80 > gameHeight) { break; }
+            if (x * 80 > gameHeight) {
+                break;
+            }
         }
         aliensMenu2.children.iterate((child) => child.anims.play('menu_fly'));
 
@@ -134,22 +197,24 @@ export class menuScene extends Phaser.Scene {
             ease: 'Linear.easeInOut',
 
 
-        })
-        //this.sound.pauseOnBlur = false;
-        //let mainMusic = this.sound.play("mainMusic", {loop: true});
-        //this.sound.pauseOnBlur = false;
+        });
+
+      
 
 
-        var mainMusic = this.sound.add('mainMusic');
+       
 
-        //mainMusic.play();
+       
+        
+
+        
 
 
     }
 
 
     update() {
-        //  Scroll the background -- Mover el Fondo 
+        //   Mover el Fondo 
         this.menuStarfield.tilePositionY += 2;
     }
 }

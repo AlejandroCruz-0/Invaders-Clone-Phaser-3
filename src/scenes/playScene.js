@@ -1,4 +1,6 @@
-import { CST } from "../CST";
+import {
+    CST
+} from "../CST";
 
 export class playScene extends Phaser.Scene {
     constructor() {
@@ -16,25 +18,13 @@ export class playScene extends Phaser.Scene {
 
     init(data) {
         console.log("started playscene");
-        
 
 
+        //verifica si la escena recibio ciertos datos para configurar
+        //ciertos, si no es asi la escena empieza con los atributos ya escritos.
         this.livesNumber = this.livesNumber ? this.livesNumber : 2;
-        this.puntaje = this.puntaje ? this.puntaje : 0;
-
-        
-
-       
+        this.puntaje = this.puntaje ? this.puntaje : 0;   
         this.waveNumber = this.waveNumber ? this.waveNumber : this.waveNumber = 1;
-       
-
-        
-
-
-       
-        
-
-
 
 
 
@@ -53,25 +43,13 @@ export class playScene extends Phaser.Scene {
 
 
 
-        this.input.keyboard.on('keydown_' + 'A', (event) => { this.scene.start(CST.SCENES.BOSS) });
-
-        this.input.keyboard.on('keydown_' + 'R', event => {
-            this.aliens.clear(undefined, true);
-        });
-
-        this.input.keyboard.on('keydown_' + 'X', event => {
-
-
-            this.player.x = this.sys.game.config.width / 2;
-            this.player.y = this.sys.game.config.height - 50;
-        });
-        //puntaje
-
-
         //animacion de invasores
         this.anims.create({
             key: 'fly',
-            frames: this.anims.generateFrameNumbers('invader', { start: 0, end: 3 }),
+            frames: this.anims.generateFrameNumbers('invader', {
+                start: 0,
+                end: 3
+            }),
             frameRate: 20,
             repeat: -1
         });
@@ -79,7 +57,11 @@ export class playScene extends Phaser.Scene {
         //animacion de explosion
         this.anims.create({
             key: 'boom',
-            frames: this.anims.generateFrameNumbers('kaboom', { start: 0, end: 15, first: 0 }),
+            frames: this.anims.generateFrameNumbers('kaboom', {
+                start: 0,
+                end: 15,
+                first: 0
+            }),
             hideOnComplete: true,
             //repeat: 1
         });
@@ -98,7 +80,7 @@ export class playScene extends Phaser.Scene {
         //aumenta la escala 
         this.player.setScale(2);
         this.player.body.setAllowGravity(false); //Desactiva la gravedad en el objeto nave
-        this.player.setCollideWorldBounds(true) //Abilita colision con los border de la escena
+        this.player.setCollideWorldBounds(true); //Abilita colision con los border de la escena
         this.player.body.immovable = true;
 
 
@@ -106,17 +88,12 @@ export class playScene extends Phaser.Scene {
         this.input.setDraggable(this.player);
 
         this.playerBullets = this.add.group(); //Creacion de grupo para balas jugador
-        this.alienBullets = this.add.group();//Creacion de grupo para balas alien
+        this.alienBullets = this.add.group(); //Creacion de grupo para balas alien
 
 
 
 
-
-
-
-
-
-        //Los Aliens
+       
         //Para registrar colision los aliens tienen que estar en un grupo de fisica Phaser.
         this.aliens = this.physics.add.group();
 
@@ -162,8 +139,12 @@ export class playScene extends Phaser.Scene {
             loop: -1,
             yoyo: true,
             ease: 'Linear.easeInOut',
-            onLoop: () => { this.container.y += 50 },
-            onYoyo: () => { this.container.y += 50 },
+            onLoop: () => {
+                this.container.y += 50
+            },
+            onYoyo: () => {
+                this.container.y += 50
+            },
 
         })
 
@@ -171,12 +152,18 @@ export class playScene extends Phaser.Scene {
 
 
 
-        this.puntajeText = this.add.text(10, 10, 'Puntaje : ' + this.puntaje, { font: '34px Arial', fill: '#fff' });
+        this.puntajeText = this.add.text(10, 10, 'Puntaje : ' + this.puntaje, {
+            font: '34px Arial',
+            fill: '#fff'
+        });
 
 
         //  configuracion de Vidas
         this.lives = this.add.group();
-        this.add.text(10, 50, 'Vidas : ', { font: '34px Arial', fill: '#fff' });
+        this.add.text(10, 50, 'Vidas : ', {
+            font: '34px Arial',
+            fill: '#fff'
+        });
 
         //configuracion de vidas, se usa el mismo sprite para     
         for (var i = 0; i < this.livesNumber; i++) {
@@ -213,7 +200,7 @@ export class playScene extends Phaser.Scene {
             callback: this.aliensDisparan,
             callbackScope: this,
             delay: 3000
-        })
+        });
 
         //funcion para disparar cada cierto tiempo
 
@@ -238,7 +225,7 @@ export class playScene extends Phaser.Scene {
         this.physics.add.collider(this.player, this.aliens, this.alien_chocan_callback, undefined, this);
 
 
-    }//fin de phaser create
+    } //fin de phaser create
 
 
 
@@ -269,7 +256,7 @@ export class playScene extends Phaser.Scene {
             bullet.body.setAllowGravity(false);
             bullet.body.onWorldBounds = true;
             this.playerBullets.add(bullet);
-            this.bulletTime = this.sys.time.now + 200;//game.scene.scenes[0].sys.time.now + 200;
+            this.bulletTime = this.sys.time.now + 200; //game.scene.scenes[0].sys.time.now + 200;
 
 
 
@@ -307,9 +294,9 @@ export class playScene extends Phaser.Scene {
 
             if (this.waveNumber === 3) {
                 this.scene.start(CST.SCENES.BOSS, {
-                    livesNumber : this.livesNumber,
-                    puntaje : this.puntaje,
-    
+                    livesNumber: this.livesNumber,
+                    puntaje: this.puntaje,
+
                 });
             }
 
@@ -328,11 +315,16 @@ export class playScene extends Phaser.Scene {
                 x: this.sys.game.config.width / 2,
                 y: this.sys.game.config.height / 2,
                 text: 'GAME OVER click para reiniciar',
-                origin: { x: 0.5, y: 0.5 },
+                origin: {
+                    x: 0.5,
+                    y: 0.5
+                },
                 style: {
                     font: 'bold 64px Arial',
                     fill: 'white',
-                    wordWrap: { width: this.sys.game.config.width }
+                    wordWrap: {
+                        width: this.sys.game.config.width
+                    }
                 }
             });
 
@@ -430,5 +422,3 @@ export class playScene extends Phaser.Scene {
 
     }
 }
-
-

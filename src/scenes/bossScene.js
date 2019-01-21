@@ -4,25 +4,13 @@ export class bossScene extends Phaser.Scene {
     constructor() {
         super({
             key: CST.SCENES.BOSS
-        })
+        });
 
-        
-       
         
         
         this.bulletTime = 0;
         
-        
-        
-        
-        
-        
-        
-        
-       
-        
-        
-
+    
 
     }
 
@@ -37,7 +25,7 @@ export class bossScene extends Phaser.Scene {
         
         this.livesNumber = data.livesNumber ? data.livesNumber : 4;
 
-        console.log(data)
+        console.log(data);
         this.puntaje = data.puntaje ? data.puntaje : 0;
 
 
@@ -53,12 +41,7 @@ export class bossScene extends Phaser.Scene {
 
     create() {
 
-        console.log(`${this.livesNumber} `)
-        
-        
-
-
-
+        console.log(`${this.livesNumber} `);
 
         //configurar bordes del mundo para que tengan colision
         this.physics.world.setBoundsCollision(true, true, true, true);
@@ -71,8 +54,8 @@ export class bossScene extends Phaser.Scene {
         //aumenta la escala 
         this.player.setScale(2);
         this.player.body.setAllowGravity(false); //Desactiva la gravedad en el objeto nave
-        this.player.setCollideWorldBounds(true) //Abilita colision con los border de la escena
-        this.player.body.immovable = true
+        this.player.setCollideWorldBounds(true); //Abilita colision con los border de la escena
+        this.player.body.immovable = true;
 
         this.player.setInteractive();
         this.input.setDraggable(this.player);
@@ -186,17 +169,17 @@ export class bossScene extends Phaser.Scene {
 
         })
 
-//collider balas alien con jugador
+        //collider balas jugador con jefe
         this.physics.add.collider(this.playerBullets, this.boss, this.balas_jugador_callback, undefined, this);
 
 
-        //collider entre aliens y jugador
+        //collider entre bala aliens y f
         this.physics.add.collider(this.bossBullets, this.player, this.balas_boss_callback, undefined, this);
 
 
 
         
-       // this.physics.add.collider(this.player, this.aliens,this.alien_chocan_callback, undefined, this);
+       
 
     }//fin de phaser create
 
@@ -220,8 +203,7 @@ export class bossScene extends Phaser.Scene {
     jugador_dispara() {
         //Funcion Que dispara una bala al presionar espacio
 
-        //  To avoid them being allowed to fire too fast we set a time limit
-        //game.scene.scenes[0].sys.time.now this.scene.scene.time.now
+        
 
         if (this.sys.time.now > this.bulletTime) {
 
@@ -257,7 +239,7 @@ export class bossScene extends Phaser.Scene {
     }
 
 
-    balas_jugador_callback(bullet, alien) {
+    balas_jugador_callback(bullet, boss) {
         
         bullet.destroy();
 

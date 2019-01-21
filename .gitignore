@@ -10,3 +10,7 @@ typings/
 
 #parcel dist folder
 dist/
+
+#VS code user settings 
+
+.vscode

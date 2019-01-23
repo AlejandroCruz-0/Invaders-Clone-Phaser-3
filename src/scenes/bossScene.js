@@ -19,7 +19,7 @@ export class bossScene extends Phaser.Scene {
     init(data) {
         console.log("started BOSSSCENE");
         console.log(`boss scene data Received `);
-        console.log(data );
+        
 
 
         
@@ -76,7 +76,7 @@ export class bossScene extends Phaser.Scene {
         this.bossHP = 10;
         
         this.bossHPBar = this.add.graphics();
-        this.bossHPBar.setDepth(1);
+        this.bossHPBar.setDepth(0);
 
         this.draw_Boss_HP_Bar(this.bossHP);
 
@@ -252,12 +252,10 @@ export class bossScene extends Phaser.Scene {
         if (this.bossHP === 0){
             this.boss.destroy();
             this.eventoDedisparoBoss.remove(false);
-            this.playerBulletTimeEvent.remove(false);
-            //this.player.body.allowDrag = false;
+            this.playerBulletTimeEvent.remove(false);            
             this.player.disableInteractive();
 
-            console.log(this.player)
-
+           
 
 
             this.make.text({
@@ -276,10 +274,7 @@ export class bossScene extends Phaser.Scene {
         
 
 
-        //  Increase the score
-        //this.score += 20;
-        //this.scoreText.text = 'Puntaje : ' + this.score;
-        //this.add.sprite(alien.x + this.container.x, alien.y + this.container.y, "kaboom").play("boom");
+       
 
         
     }

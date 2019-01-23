@@ -21,7 +21,9 @@
   },
   "homepage": "https://github.com/AlejandroCruz-0/Invaders-Clone-Phaser-3#readme",
   "dependencies": {
-    "jshint": "^2.9.7",
+    "jshint": "^2.9.7"
+  },
+  "devDependencies": {
     "parcel-plugin-asset-copier": "^1.0.0"
   }
 }

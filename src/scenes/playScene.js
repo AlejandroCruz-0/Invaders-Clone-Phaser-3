@@ -292,7 +292,7 @@ export class playScene extends Phaser.Scene {
             this.waveNumber += 1;
 
 
-            if (this.waveNumber === 3) {
+            if (this.waveNumber === 2) {
                 this.scene.start(CST.SCENES.BOSS, {
                     livesNumber: this.livesNumber,
                     puntaje: this.puntaje,
